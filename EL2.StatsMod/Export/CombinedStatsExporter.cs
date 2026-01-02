@@ -6,6 +6,7 @@ using Amplitude.Framework;
 using Amplitude.Framework.Session;
 using Amplitude.Mercury.Analytics;
 using Amplitude.Mercury.Interop;
+using EL2.StatsMod.Utils;
 using Newtonsoft.Json;
 using MercuryMetadataKeys = Amplitude.Mercury.Session.MetadataKeys;
 
@@ -222,23 +223,14 @@ namespace EL2.StatsMod
                 {
                     string value;
 
-                    if (metadata.TryGetMetadata(MercuryMetadataKeys.GameDifficulty, out value) &&
-                        !string.IsNullOrEmpty(value))
-                    {
-                        game.Difficulty = value;
-                    }
+                    if (metadata.TryGetMetadata(MercuryMetadataKeys.GameDifficulty, out value))
+                        game.Difficulty = TextFormatUtils.LocalizeOrRaw(value) ?? "Unknown";
 
-                    if (metadata.TryGetMetadata(MercuryMetadataKeys.WorldSize, out value) &&
-                        !string.IsNullOrEmpty(value))
-                    {
-                        game.MapSize = value;
-                    }
+                    if (metadata.TryGetMetadata(MercuryMetadataKeys.WorldSize, out value))
+                        game.MapSize = TextFormatUtils.LocalizeOrRaw(value) ?? "Unknown";
 
-                    if (metadata.TryGetMetadata(MercuryMetadataKeys.GameSpeed, out value) &&
-                        !string.IsNullOrEmpty(value))
-                    {
-                        game.GameSpeed = value;
-                    }
+                    if (metadata.TryGetMetadata(MercuryMetadataKeys.GameSpeed, out value))
+                        game.GameSpeed = TextFormatUtils.LocalizeOrRaw(value) ?? "Unknown";
                 }
             }
             catch (Exception ex)
@@ -248,6 +240,7 @@ namespace EL2.StatsMod
 
             return game;
         }
+
 
         private static VictorySettings ReadVictorySettingsMetadata()
         {

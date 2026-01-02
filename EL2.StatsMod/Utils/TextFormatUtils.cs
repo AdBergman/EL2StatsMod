@@ -96,5 +96,54 @@ namespace EL2.StatsMod.Utils
 
             return new string(chars);
         }
+        
+        internal static string LocalizeOrPrettifyOrRaw(string value, string unknownValue = "Unknown")
+        {
+            if (string.IsNullOrEmpty(value))
+                return unknownValue;
+
+            // Try localization first
+            try
+            {
+                var key = new StaticString(value);
+                var localized = GetLocalizedNameOrNull(key);
+                if (!string.IsNullOrEmpty(localized))
+                    return localized;
+            }
+            catch
+            {
+                // ignore
+            }
+
+            // Fallback: prettify keys like WorldSize_Large
+            var pretty = PrettifyKey(value);
+            if (!string.IsNullOrEmpty(pretty))
+                return pretty;
+
+            return value;
+        }
+        
+        internal static string LocalizeOrRaw(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
+            // Try localizing if it's a key
+            try
+            {
+                var key = new StaticString(value);
+                var localized = GetLocalizedNameOrNull(key);
+                if (!string.IsNullOrEmpty(localized))
+                    return localized;
+            }
+            catch
+            {
+                // ignore - might not be a valid StaticString key
+            }
+
+            // fallback: unchanged
+            return value;
+        }
+
     }
 }
