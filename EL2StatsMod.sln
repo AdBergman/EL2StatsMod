@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EL2.StatsMod", "EL2.StatsMod\EL2.StatsMod.csproj", "{CBF4FCAE-4D19-4794-BCF4-29BC2AE4BD97}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBF4FCAE-4D19-4794-BCF4-29BC2AE4BD97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF4FCAE-4D19-4794-BCF4-29BC2AE4BD97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF4FCAE-4D19-4794-BCF4-29BC2AE4BD97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF4FCAE-4D19-4794-BCF4-29BC2AE4BD97}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
