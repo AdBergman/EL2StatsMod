@@ -25,10 +25,6 @@ namespace EL2.StatsMod.Export
             try
             {
                 AllStatsRoot root = new AllStatsRoot();
-                root.Version = ExportVersion;
-                root.GeneratedAtUtc = DateTime.UtcNow.ToString("o");
-                root.GameId = "EL2_" + DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
-
                 int empireCount = (allEmpiresStatistics != null) ? allEmpiresStatistics.Length : 0;
                 root.EmpireCount = empireCount;
 

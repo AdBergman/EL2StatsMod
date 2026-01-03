@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Amplitude;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Interop;
 using EL2.StatsMod.Utils;
@@ -175,30 +174,5 @@ namespace EL2.StatsMod.Export
                 return null;
             }
         }
-    
-        // ---------------------------------------------------------------------
-        // Helper method – get pretty UI ConstructibleName from Key
-        // ---------------------------------------------------------------------
-
-        private static string GetLocalizedConstructibleName(StaticString constructibleKey)
-        {
-            try
-            {
-                var dataUtils = new Amplitude.Mercury.UI.Helpers.DataUtils();
-
-                if (dataUtils.TryGetLocalizedTitle(constructibleKey, out string title))
-                {
-                    return title;
-                }
-            }
-            catch
-            {
-                // swallow – exporter must never crash the game
-            }
-
-            // Fallback: raw key
-            return constructibleKey.ToString();
-        }
-
     }
 }

@@ -42,7 +42,10 @@ namespace EL2.StatsMod.Export
                 if (!Directory.Exists(outputDirectory))
                     Directory.CreateDirectory(outputDirectory);
 
-                string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+                DateTime generatedAtUtc = DateTime.UtcNow;
+                string timestamp = generatedAtUtc.ToString("yyyyMMdd_HHmmss");
+                string gameId = "EL2_" + timestamp;
+                string generatedAtUtcIso = generatedAtUtc.ToString("o");
 
                 // 1) Get JSON from the three exporters.
                 //    These should return JSON strings, not write their own files.
@@ -60,17 +63,9 @@ namespace EL2.StatsMod.Export
                 JObject root = new JObject
                 {
                     ["version"]        = ExportVersion,
-                    ["generatedAtUtc"] = DateTime.UtcNow.ToString("o") // ISO-8601
+                    ["generatedAtUtc"] = generatedAtUtcIso,
+                    ["gameId"] = gameId
                 };
-
-                // Optional: game-level metadata hook (fill when ready)
-                JObject gameMeta = new JObject();
-                // Example placeholders, once you wire them up:
-                // gameMeta["difficulty"] = "Serious";
-                // gameMeta["mapSize"]    = "Large";
-                // gameMeta["modVersion"] = StatsLoggerPlugin.PluginVersion;
-                if (gameMeta.HasValues)
-                    root["game"] = gameMeta;
 
                 if (allStatsToken != null)
                     root["allStats"] = allStatsToken;

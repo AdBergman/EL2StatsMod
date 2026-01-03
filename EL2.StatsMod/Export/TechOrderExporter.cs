@@ -10,8 +10,6 @@ namespace EL2.StatsMod.Export
 {
     internal static class TechOrderExporter
     {
-        private const string ExportVersion = "1.0";
-
         /// <summary>
         /// Builds a JSON payload describing the order in which each empire unlocked technologies.
         /// This method does NOT write to disk – it just returns the JSON string.
@@ -70,8 +68,6 @@ namespace EL2.StatsMod.Export
                 });
 
             TechOrderSnapshot snapshot = new TechOrderSnapshot();
-            snapshot.Version = ExportVersion;
-            snapshot.GeneratedAtUtc = DateTime.UtcNow.ToString("o");
             snapshot.EmpireCount = empireCount;
             snapshot.EntryCount = entries.Count;
             snapshot.Entries = entries.ToArray();
@@ -88,9 +84,6 @@ namespace EL2.StatsMod.Export
         /// </summary>
         private sealed class TechOrderSnapshot
         {
-            public string Version { get; set; }
-            public string GeneratedAtUtc { get; set; }
-
             public int EmpireCount { get; set; }
             public int EntryCount { get; set; }
 

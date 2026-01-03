@@ -5,10 +5,6 @@ namespace EL2.StatsMod.Dto
     // Root object for CombinedStatsExporter JSON
     internal sealed class AllStatsRoot
     {
-        public string Version;
-        public string GeneratedAtUtc;
-        public string GameId;
-
         public int EmpireCount;
         public int MaxTurn;
         public int TopScoreEmpire;
