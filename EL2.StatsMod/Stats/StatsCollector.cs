@@ -103,10 +103,10 @@ namespace EL2.StatsMod
             return maxTurn;
         }
 
-        internal static (int winnerEmpire, float winnerScore) GetWinnerAtTurn(int turn)
+        internal static (int topScoreEmpire, float topScore) GetTopScoreEmpireAtTurn(int turn)
         {
-            int winnerEmpire = -1;
-            float winnerScore = float.MinValue;
+            int topScoreEmpire = -1;
+            float topScore = float.MinValue;
 
             foreach (var empireEntry in _statsByEmpireAndTurn)
             {
@@ -116,15 +116,15 @@ namespace EL2.StatsMod
                 if (perTurn.TryGetValue(turn, out var ts) && ts.Score.HasValue)
                 {
                     float score = ts.Score.Value;
-                    if (score > winnerScore)
+                    if (score > topScore)
                     {
-                        winnerScore = score;
-                        winnerEmpire = empireIndex;
+                        topScore = score;
+                        topScoreEmpire = empireIndex;
                     }
                 }
             }
 
-            return (winnerEmpire, winnerScore);
+            return (topScoreEmpire, topScore);
         }
 
         internal static void ForceCollectAllStats(

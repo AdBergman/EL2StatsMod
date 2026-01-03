@@ -75,6 +75,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Dto\CombinedStatsDtos.cs" />
         <Compile Include="Export\CityBreakdownExporter.cs" />
         <Compile Include="Export\CombinedStatsExporter.cs" />
         <Compile Include="Export\EndGameInfoExporter.cs" />
@@ -88,6 +89,7 @@
         <Compile Include="Stats\TurnStats.cs" />
         <Compile Include="Tech\TechFactionResolver.cs" />
         <Compile Include="Tech\TechNameResolver.cs" />
+        <Compile Include="Utils\EmpireInfoUtils.cs" />
         <Compile Include="Utils\TextFormatUtils.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
