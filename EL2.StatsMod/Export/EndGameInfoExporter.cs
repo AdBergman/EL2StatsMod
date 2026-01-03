@@ -1,12 +1,15 @@
 ﻿using System;
 using System.IO;
-using Amplitude.Mercury.Interop;     // EmpireStatistics
+using Amplitude.Mercury.Interop;
 using BepInEx.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnityEngine;                   // Debug.LogException
+using UnityEngine;
+// EmpireStatistics
 
-namespace EL2.StatsMod
+// Debug.LogException
+
+namespace EL2.StatsMod.Export
 {
     internal static class EndGameInfoExporter
     {

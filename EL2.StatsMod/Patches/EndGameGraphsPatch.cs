@@ -1,12 +1,16 @@
 ﻿using System;
 using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.UI;
+using BepInEx;
+using EL2.StatsMod.Export;
+using EL2.StatsMod.Stats;
 using HarmonyLib;
 using UnityEngine;
-using BepInEx;           // for Paths
-using BepInEx.Logging;   // for ManualLogSource (used by EndGameInfoExporter)
+// for Paths
 
-namespace EL2.StatsMod
+// for ManualLogSource (used by EndGameInfoExporter)
+
+namespace EL2.StatsMod.Patches
 {
     [HarmonyPatch(typeof(EndGameWindow_GraphsShowable), "TryReloadGraphValues")]
     public static class EndGameGraphsPatch

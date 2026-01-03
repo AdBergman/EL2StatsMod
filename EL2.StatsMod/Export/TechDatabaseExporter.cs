@@ -9,9 +9,10 @@ using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.UI.Tooltips;
 using BepInEx;
+using EL2.StatsMod.Tech;
 using Path = System.IO.Path;
 
-namespace EL2.StatsMod
+namespace EL2.StatsMod.Export
 {
     internal static class TechDatabaseExporter
     {

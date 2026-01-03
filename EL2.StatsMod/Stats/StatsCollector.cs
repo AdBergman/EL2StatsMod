@@ -4,7 +4,7 @@ using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.UI;
 using UnityEngine;
 
-namespace EL2.StatsMod
+namespace EL2.StatsMod.Stats
 {
     internal static class StatsCollector
     {

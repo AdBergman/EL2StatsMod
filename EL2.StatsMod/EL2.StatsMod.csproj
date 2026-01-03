@@ -78,7 +78,9 @@
         <Compile Include="Dto\CombinedStatsDtos.cs" />
         <Compile Include="Export\CityBreakdownExporter.cs" />
         <Compile Include="Export\CombinedStatsExporter.cs" />
+        <Compile Include="Export\EmpireStatsEntryFactory.cs" />
         <Compile Include="Export\EndGameInfoExporter.cs" />
+        <Compile Include="Export\MetadataReaders.cs" />
         <Compile Include="Export\ScienceBreakdownExporter.cs" />
         <Compile Include="Export\TechDatabaseExporter.cs" />
         <Compile Include="Export\TechOrderExporter.cs" />

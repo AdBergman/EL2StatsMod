@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Amplitude;
-using Amplitude.Framework;
-using Amplitude.Framework.Session;
-using Amplitude.Mercury.Analytics;
 using Amplitude.Mercury.Interop;
 using EL2.StatsMod.Dto;
+using EL2.StatsMod.Export;
+using EL2.StatsMod.Stats;
 using EL2.StatsMod.Utils;
 using Newtonsoft.Json;
-using MercuryMetadataKeys = Amplitude.Mercury.Session.MetadataKeys;
 
-namespace EL2.StatsMod
+namespace EL2.StatsMod.Export
 {
     internal static class CombinedStatsExporter
     {
@@ -45,10 +42,8 @@ namespace EL2.StatsMod
                 root.TopScore = topScoreInfo.topScore;
 
                 // --- Game / victory metadata ---
-                GameSettings game = ReadGameSettingsMetadata();
-                VictorySettings victory = ReadVictorySettingsMetadata();
-                root.Game = game;
-                root.Victory = victory;
+                root.Game = MetadataReaders.ReadGameSettingsMetadata();
+                root.Victory = MetadataReaders.ReadVictorySettingsMetadata();
 
                 // --- Per-empire metadata + mapping ---
                 List<EmpireStatsEntry> empires = new List<EmpireStatsEntry>();
@@ -141,102 +136,6 @@ namespace EL2.StatsMod
         // Helpers to construct DTOs
         // --------------------------------------------------------------------
 
-        private static GameSettings ReadGameSettingsMetadata()
-        {
-            GameSettings game = new GameSettings();
-            game.Difficulty = "Unknown";
-            game.MapSize    = "Unknown";
-            game.GameSpeed  = "Unknown";
-
-            try
-            {
-                var sessionService = Services.GetService<ISessionService>();
-                var metadata = (sessionService != null) ? sessionService.Session.Metadata : null;
-
-                if (metadata != null)
-                {
-                    string value;
-
-                    if (metadata.TryGetMetadata(MercuryMetadataKeys.GameDifficulty, out value))
-                        game.Difficulty = TextFormatUtils.LocalizeOrRaw(value) ?? "Unknown";
-
-                    if (metadata.TryGetMetadata(MercuryMetadataKeys.WorldSize, out value))
-                        game.MapSize = TextFormatUtils.LocalizeOrRaw(value) ?? "Unknown";
-
-                    if (metadata.TryGetMetadata(MercuryMetadataKeys.GameSpeed, out value))
-                        game.GameSpeed = TextFormatUtils.LocalizeOrRaw(value) ?? "Unknown";
-                }
-            }
-            catch (Exception ex)
-            {
-                StatsLoggerPlugin.Log?.LogWarning("[CombinedStatsExporter] Failed to read session metadata: " + ex.Message);
-            }
-
-            return game;
-        }
-
-
-        private static VictorySettings ReadVictorySettingsMetadata()
-        {
-            VictorySettings victory = new VictorySettings();
-            victory.VictoryPreset = "Unknown";
-            victory.ActualVictoryCondition = "Unknown";
-            victory.VictoryConditionsEnabled = "Unknown";
-
-            try
-            {
-                var vcSnapshot = Snapshots.VictoryConditionsWindowSnapshot;
-                if (vcSnapshot != null)
-                {
-                    var data = vcSnapshot.PresentationData;
-
-                    // Preset: EndGameDefinitionName (chosen in game setup)
-                    StaticString defName = data.EndGameDefinitionName;
-                    if (!StaticString.IsNullOrEmpty(defName))
-                        victory.VictoryPreset = defName.ToString();
-
-                    // Actual victory condition that fired
-                    victory.ActualVictoryCondition = data.EndGameConditionType.ToString();
-
-                    // Enabled conditions, prefer AnalyticsEvent_GameCreated helper
-                    try
-                    {
-                        string detail = AnalyticsEvent_GameCreated.GatherEndGameConditionActivation();
-                        if (!string.IsNullOrEmpty(detail))
-                        {
-                            victory.VictoryConditionsEnabled = detail;
-                        }
-                    }
-                    catch
-                    {
-                        // Fallback: build from EndGameConditionsInfo
-                        var infos = data.EndGameConditionsInfo;
-                        if (infos != null && infos.Length > 0)
-                        {
-                            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                            for (int i = 0; i < infos.Length; i++)
-                            {
-                                if (i > 0)
-                                    sb.Append(';');
-
-                                var info = infos[i];
-                                sb.Append(info.ConditionType);
-                                sb.Append(':');
-                                sb.Append(info.IsEnabled ? "True" : "False");
-                            }
-
-                            victory.VictoryConditionsEnabled = sb.ToString();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                StatsLoggerPlugin.Log?.LogWarning("[CombinedStatsExporter] Failed to read victory settings: " + ex.Message);
-            }
-
-            return victory;
-        }
 
         private static EmpireStatsEntry BuildEmpireEntry(
             int empireIndex,

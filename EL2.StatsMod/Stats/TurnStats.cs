@@ -1,4 +1,4 @@
-﻿namespace EL2.StatsMod
+﻿namespace EL2.StatsMod.Stats
 {
     // Holds all stats we care about for a single (empire, turn)
     internal struct TurnStats

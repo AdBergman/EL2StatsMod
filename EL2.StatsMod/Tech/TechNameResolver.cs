@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using Amplitude;
 using Amplitude.Mercury.UI.Tooltips;
 
-namespace EL2.StatsMod
+namespace EL2.StatsMod.Tech
 {
     internal static class TechNameResolver
     {

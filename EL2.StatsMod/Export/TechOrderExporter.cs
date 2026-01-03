@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Amplitude;
 using Amplitude.Collections;
 using Amplitude.Mercury.Interop;
+using EL2.StatsMod.Tech;
 using Newtonsoft.Json;
 
-namespace EL2.StatsMod
+namespace EL2.StatsMod.Export
 {
     internal static class TechOrderExporter
     {

@@ -4,7 +4,7 @@ using Amplitude.Framework;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Data.Simulation.Prerequisites;
 
-namespace EL2.StatsMod
+namespace EL2.StatsMod.Tech
 {
     internal static class TechFactionResolver
     {
