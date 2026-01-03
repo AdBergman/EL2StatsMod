@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using Amplitude.Mercury.Interop;
 using EL2.StatsMod.Dto;
-using EL2.StatsMod.Export;
 using EL2.StatsMod.Stats;
-using EL2.StatsMod.Utils;
 using Newtonsoft.Json;
 
 namespace EL2.StatsMod.Export
@@ -53,7 +51,7 @@ namespace EL2.StatsMod.Export
                 {
                     for (int empireIndex = 0; empireIndex < allEmpiresStatistics.Length; empireIndex++)
                     {
-                        EmpireStatsEntry entry = BuildEmpireEntry(
+                        EmpireStatsEntry entry = EmpireStatsEntryFactory.Build(
                             empireIndex,
                             ref allEmpiresStatistics[empireIndex],
                             maxTurn
@@ -120,7 +118,7 @@ namespace EL2.StatsMod.Export
                 root.Empires = empires;
 
                 // --- Serialize ---
-                string json = JsonConvert.SerializeObject(root, Formatting.Indented);
+                var json = JsonConvert.SerializeObject(root, Formatting.Indented);
                 return json;
             }
             catch (Exception ex)
@@ -130,84 +128,5 @@ namespace EL2.StatsMod.Export
                 return null;
             }
         }
-        
-
-        // --------------------------------------------------------------------
-        // Helpers to construct DTOs
-        // --------------------------------------------------------------------
-
-
-        private static EmpireStatsEntry BuildEmpireEntry(
-            int empireIndex,
-            ref EmpireStatistics stats,
-            int maxTurn)
-        {
-            EmpireStatsEntry entry = new EmpireStatsEntry();
-            entry.EmpireIndex = empireIndex;
-
-            string factionKey = EmpireInfoUtils.ResolveEmpireFactionName(empireIndex);
-            entry.FactionKey = factionKey;
-            entry.FactionDisplayName = TextFormatUtils.PrettifyKey(factionKey, "Faction_");
-
-
-            // Tech count
-            entry.TechCount = stats.EmpireTechnologyUnlocked.Length;
-
-            // Era timing logic (ported from your CSV exporter, but stored as int[])
-            int finalEraIndex = 0;
-            int[] cleanedEraTurns = null;
-
-            if (stats.FirstTurnPerEra != null && stats.FirstTurnPerEra.Length > 0)
-            {
-                int[] eraTurns = stats.FirstTurnPerEra;
-                int length = eraTurns.Length;
-                cleanedEraTurns = new int[length];
-
-                int lastValidTurn = 0;
-
-                for (int era = 0; era < length; era++)
-                {
-                    int raw = eraTurns[era];
-                    int cleaned = raw;
-
-                    if (era == 0)
-                    {
-                        // Era 0: always "reached", but sanitize silly values
-                        if (cleaned <= 0 || cleaned > maxTurn)
-                            cleaned = 1; // fallback
-
-                        lastValidTurn = cleaned;
-                        finalEraIndex = 0;
-                    }
-                    else
-                    {
-                        // Only accept if:
-                        //  - > 0
-                        //  - <= maxTurn
-                        //  - strictly after previous era's first turn
-                        if (cleaned <= 0 || cleaned > maxTurn || cleaned < lastValidTurn)
-                        {
-                            cleaned = 0; // unreached / bogus
-                        }
-                        else
-                        {
-                            finalEraIndex = era;
-                            lastValidTurn = cleaned;
-                        }
-                    }
-
-                    cleanedEraTurns[era] = cleaned;
-                }
-            }
-
-            entry.FinalEraIndex = finalEraIndex;
-            entry.FirstTurnPerEra = cleanedEraTurns;
-
-            // Allocate list for per-turn stats (will be filled later)
-            entry.PerTurn = new List<TurnStatsEntry>();
-
-            return entry;
-        }
-        
     }
 }
