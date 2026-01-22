@@ -4,17 +4,17 @@ using Amplitude;
 using Amplitude.Collections;
 using Amplitude.Mercury.Interop;
 using EL2.StatsMod.Tech;
-using Newtonsoft.Json;
 
 namespace EL2.StatsMod.Export
 {
     internal static class TechOrderExporter
     {
         /// <summary>
-        /// Builds a JSON payload describing the order in which each empire unlocked technologies.
-        /// This method does NOT write to disk – it just returns the JSON string.
+        /// Builds the tech order payload describing the order in which each empire unlocked technologies.
+        /// This does NOT serialize to JSON and does NOT write to disk.
+        /// EndGameInfoExporter is responsible for serialization policy (camelCase).
         /// </summary>
-        internal static string ExportToJson(EmpireStatistics[] allEmpiresStatistics)
+        internal static TechOrderSnapshot Export(EmpireStatistics[] allEmpiresStatistics)
         {
             if (allEmpiresStatistics == null || allEmpiresStatistics.Length == 0)
             {
@@ -72,9 +72,7 @@ namespace EL2.StatsMod.Export
             snapshot.EntryCount = entries.Count;
             snapshot.Entries = entries.ToArray();
 
-            // Pretty-printed JSON for easier debugging / inspection
-            string json = JsonConvert.SerializeObject(snapshot, Formatting.Indented);
-            return json;
+            return snapshot;
         }
 
         // --- DTOs for JSON shape ---
@@ -82,18 +80,17 @@ namespace EL2.StatsMod.Export
         /// <summary>
         /// Root object for the tech order section.
         /// </summary>
-        private sealed class TechOrderSnapshot
+        internal sealed class TechOrderSnapshot
         {
             public int EmpireCount { get; set; }
             public int EntryCount { get; set; }
-
             public TechOrderEntry[] Entries { get; set; }
         }
 
         /// <summary>
         /// One "tech unlocked on turn X by empire Y" record.
         /// </summary>
-        private sealed class TechOrderEntry
+        internal sealed class TechOrderEntry
         {
             public int EmpireIndex { get; set; }
             public int Turn { get; set; }

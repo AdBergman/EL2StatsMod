@@ -1,0 +1,50 @@
+﻿# Default ignored files
+/shelf/
+/workspace.xml
+
+# Rider ignored files
+/contentModel.xml
+/.idea.EL2StatsMod.iml
+/modules.xml
+/projectSettingsUpdater.xml
+
+# Ignored default folder with query files
+/queries/
+
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# Editor-based HTTP Client requests
+/httpRequests/
+
+# -----------------------------
+# Game / Amplitude / Unity binaries
+# -----------------------------
+*.dll
+*.exe
+
+# BepInEx generated stuff
+BepInEx/
+doorstop_config.ini
+winhttp.dll
+
+# -----------------------------
+# Rider / IDE (extra safety)
+# -----------------------------
+.idea/
+*.suo
+*.user
+*.userprefs
+
+# -----------------------------
+# Build output
+# -----------------------------
+bin/
+obj/
+
+# -----------------------------
+# Local exports / logs
+# -----------------------------
+*.json
+*.log

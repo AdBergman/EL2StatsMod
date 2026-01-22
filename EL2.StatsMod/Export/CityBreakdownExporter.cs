@@ -2,7 +2,6 @@
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Interop;
 using EL2.StatsMod.Utils;
-using Newtonsoft.Json;
 
 namespace EL2.StatsMod.Export
 {
@@ -12,10 +11,9 @@ namespace EL2.StatsMod.Export
         // DTOs for JSON output
         // ---------------------------------------------------------------------
 
-        private sealed class CityBreakdown
+        internal sealed class CityBreakdown
         {
             public int CityCount { get; set; }
-
             public List<CitySummaryEntry> Cities { get; set; }
 
             public CityBreakdown()
@@ -24,13 +22,11 @@ namespace EL2.StatsMod.Export
             }
         }
 
-        private sealed class CitySummaryEntry
+        internal sealed class CitySummaryEntry
         {
             // Identity / ownership
             public byte EmpireIndex { get; set; }
-
             public string Name { get; set; }
-
             public bool IsCapital { get; set; }
 
             // Scale / size
@@ -77,10 +73,10 @@ namespace EL2.StatsMod.Export
         }
 
         // ---------------------------------------------------------------------
-        // Export entry – return JSON string, no file IO
+        // Export entry – return DTO, no JSON, no file IO
         // ---------------------------------------------------------------------
 
-        internal static string ExportToJson()
+        internal static CityBreakdown Export()
         {
             try
             {
@@ -131,7 +127,7 @@ namespace EL2.StatsMod.Export
                     entry.TurnBeforeGrowth = (float)s.TurnBeforeGrowth;
                     entry.ProductionNet = (float)s.ProductionNet;
                     entry.ApprovalNetInPercent = (float)s.ApprovalNetInPercent;
-                
+
                     entry.SettlementApprovalDisplayName =
                         TextFormatUtils.GetLocalizedNameOrNull(
                             s.SettlementApprovalDefinitionName
@@ -140,17 +136,19 @@ namespace EL2.StatsMod.Export
                     entry.GrowingPopulationName =
                         TextFormatUtils.GetLocalizedNameOrNull(s.GrowingPopulationName)
                         ?? s.GrowingPopulationName.ToString();
-                
+
                     entry.CurrentConstructibleDisplayName =
                         TextFormatUtils.GetLocalizedNameOrNull(
                             s.CurrentConstructionInfo.ConstructibleDefinitionName
                         );
-                
+
                     entry.Fortification = s.Fortification;
                     entry.NumberOfPresentMilitiaUnits = s.NumberOfPresentMilitiaUnits;
                     entry.IsBesieged = s.IsBesieged;
                     entry.IsMutinous = s.IsMutinous;
 
+                    // Note: original class had IsMutinous but not IsUnderSiege (you had IsBesieged).
+                    // Keep exactly what you had.
                     entry.DistanceWithCapital = s.DistanceWithCapital;
 
                     cities.Add(entry);
@@ -165,8 +163,7 @@ namespace EL2.StatsMod.Export
                     Cities = cities
                 };
 
-                string json = JsonConvert.SerializeObject(breakdown, Formatting.Indented);
-                return json;
+                return breakdown;
             }
             catch
             {

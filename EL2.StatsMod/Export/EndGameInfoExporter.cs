@@ -4,10 +4,8 @@ using Amplitude.Mercury.Interop;
 using BepInEx.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
-// EmpireStatistics
-
-// Debug.LogException
 
 namespace EL2.StatsMod.Export
 {
@@ -15,11 +13,26 @@ namespace EL2.StatsMod.Export
     {
         private const string ExportVersion = "1.0";
 
+        // Single policy point for JSON serialization across the whole export.
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy
+                {
+                    ProcessDictionaryKeys = true,
+                    OverrideSpecifiedNames = false
+                }
+            },
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         /// <summary>
         /// Creates a single end-game JSON file containing:
-        ///   - allStats   (from CombinedStatsExporter.ExportToJson)
-        ///   - techOrder  (from TechOrderExporter.ExportToJson)
-        ///   - cityBreakdown (from CityBreakdownExporter.ExportToJson)
+        ///   - allStats
+        ///   - techOrder
+        ///   - cityBreakdown
         ///
         /// allEmpiresStatistics is the same array you previously passed
         /// into CombinedStatsExporter / TechOrderExporter.
@@ -47,37 +60,35 @@ namespace EL2.StatsMod.Export
                 string gameId = "EL2_" + timestamp;
                 string generatedAtUtcIso = generatedAtUtc.ToString("o");
 
-                // 1) Get JSON from the three exporters.
-                //    These should return JSON strings, not write their own files.
-                string allStatsJson      = CombinedStatsExporter.ExportToJson(allEmpiresStatistics);
-                string techOrderJson     = TechOrderExporter.ExportToJson(allEmpiresStatistics);
-                string cityBreakdownJson = CityBreakdownExporter.ExportToJson();
+                // 1) Build DTO payloads (no JSON strings, no file IO)
+                var allStats = CombinedStatsExporter.Export(allEmpiresStatistics);
+                var techOrder = TechOrderExporter.Export(allEmpiresStatistics);
+                var cityBreakdown = CityBreakdownExporter.Export();
 
-                // 2) Parse into JTokens so we can nest them nicely.
-                //    If any exporter returns null/empty, we omit that section.
-                JToken allStatsToken      = ParseOrNull(allStatsJson, "allStats", logger);
-                JToken techOrderToken     = ParseOrNull(techOrderJson, "techOrder", logger);
-                JToken cityBreakdownToken = ParseOrNull(cityBreakdownJson, "cityBreakdown", logger);
-
-                // 3) Build the root object.
+                // 2) Build the root JSON object.
+                // Root keys are set explicitly and are already camelCase.
                 JObject root = new JObject
                 {
-                    ["version"]        = ExportVersion,
+                    ["version"] = ExportVersion,
                     ["generatedAtUtc"] = generatedAtUtcIso,
                     ["gameId"] = gameId
                 };
 
-                if (allStatsToken != null)
-                    root["allStats"] = allStatsToken;
+                // 3) Attach sections, converting DTOs into JTokens using the shared serializer policy.
+                // This is where camelCase gets applied for the entire nested tree.
+                JsonSerializer serializer = JsonSerializer.Create(JsonSettings);
 
-                if (techOrderToken != null)
-                    root["techOrder"] = techOrderToken;
+                if (allStats != null)
+                    root["allStats"] = JToken.FromObject(allStats, serializer);
 
-                if (cityBreakdownToken != null)
-                    root["cityBreakdown"] = cityBreakdownToken;
+                if (techOrder != null)
+                    root["techOrder"] = JToken.FromObject(techOrder, serializer);
 
-                // 4) Serialize the whole thing.
-                string finalJson = JsonConvert.SerializeObject(root, Formatting.Indented);
+                if (cityBreakdown != null)
+                    root["cityBreakdown"] = JToken.FromObject(cityBreakdown, serializer);
+
+                // 4) Serialize once, using the shared settings.
+                string finalJson = JsonConvert.SerializeObject(root, JsonSettings);
 
                 // 5) Write one file.
                 string fileName = "EL2_EndGame_" + timestamp + ".json";
@@ -96,30 +107,6 @@ namespace EL2.StatsMod.Export
                 {
                     Debug.LogException(ex);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Parses a JSON string into a JToken.
-        /// Returns null if the input is null/empty.
-        /// Logs a warning if parsing fails.
-        /// </summary>
-        private static JToken ParseOrNull(string json, string sectionName, ManualLogSource logger)
-        {
-            if (string.IsNullOrEmpty(json))
-                return null;
-
-            try
-            {
-                return JToken.Parse(json);
-            }
-            catch (Exception ex)
-            {
-                logger?.LogWarning(
-                    "[EndGameInfoExporter] Failed to parse JSON returned from " +
-                    sectionName + " exporter: " + ex.Message
-                );
-                return null;
             }
         }
     }
