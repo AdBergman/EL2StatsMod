@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Amplitude;
 using Amplitude.Collections;
 using Amplitude.Mercury.Interop;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Amplitude.Mercury.Interop;
+using BepInEx;
 using BepInEx.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,6 +13,7 @@ namespace EL2.StatsMod.Export
     internal static class EndGameInfoExporter
     {
         private const string ExportVersion = "1.0";
+        private const string ReportsFolderName = "reports";
 
         // Single policy point for JSON serialization across the whole export.
         private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
@@ -52,8 +54,13 @@ namespace EL2.StatsMod.Export
                     return;
                 }
 
-                if (!Directory.Exists(outputDirectory))
-                    Directory.CreateDirectory(outputDirectory);
+                // Ignore caller-provided outputDirectory for Release 1.0.
+                // Always write to: <BepInExRoot>/reports
+                string bepinexRoot = Paths.BepInExRootPath;
+                string reportsDirectory = Path.Combine(bepinexRoot, ReportsFolderName);
+
+                if (!Directory.Exists(reportsDirectory))
+                    Directory.CreateDirectory(reportsDirectory);
 
                 DateTime generatedAtUtc = DateTime.UtcNow;
                 string timestamp = generatedAtUtc.ToString("yyyyMMdd_HHmmss");
@@ -90,12 +97,23 @@ namespace EL2.StatsMod.Export
                 // 4) Serialize once, using the shared settings.
                 string finalJson = JsonConvert.SerializeObject(root, JsonSettings);
 
-                // 5) Write one file.
+                // 5) Write one file into /reports.
                 string fileName = "EL2_EndGame_" + timestamp + ".json";
-                string filePath = Path.Combine(outputDirectory, fileName);
-                File.WriteAllText(filePath, finalJson);
+                string filePath = Path.Combine(reportsDirectory, fileName);
 
-                logger?.LogInfo("[EndGameInfoExporter] Saved combined end-game JSON to " + filePath);
+                try
+                {
+                    File.WriteAllText(filePath, finalJson);
+                    logger?.LogInfo("[EndGameInfoExporter] Saved combined end-game JSON to " + filePath);
+                }
+                catch (Exception ioEx)
+                {
+                    logger?.LogError(
+                        "[EndGameInfoExporter] Failed writing JSON to '" + filePath + "'. " +
+                        "Check folder permissions / antivirus. Exception: " + ioEx
+                    );
+                    throw;
+                }
             }
             catch (Exception ex)
             {

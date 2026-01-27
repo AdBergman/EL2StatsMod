@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace EL2.StatsMod
 {
-    [BepInPlugin("ab.el2.statsmod", "EL2 Stats Mod", "0.1.0")]
+    [BepInPlugin("ab.el2.statsmod", "EL2 Stats Mod", "1.0.0")]
     // Entry point for the EL2 Stats Mod.
     //
     // Responsibilities:

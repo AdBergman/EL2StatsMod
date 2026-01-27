@@ -81,8 +81,6 @@
         <Compile Include="Export\EmpireStatsEntryFactory.cs" />
         <Compile Include="Export\EndGameInfoExporter.cs" />
         <Compile Include="Export\MetadataReaders.cs" />
-        <Compile Include="Export\ScienceBreakdownExporter.cs" />
-        <Compile Include="Export\TechDatabaseExporter.cs" />
         <Compile Include="Export\TechOrderExporter.cs" />
         <Compile Include="Patches\EndGameGraphsPatch.cs" />
         <Compile Include="StatsLoggerPlugin.cs" />
@@ -93,6 +91,10 @@
         <Compile Include="Tech\TechNameResolver.cs" />
         <Compile Include="Utils\EmpireInfoUtils.cs" />
         <Compile Include="Utils\TextFormatUtils.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="FIDSI.jpg" />
+      <Content Include="TechOrder.jpg" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

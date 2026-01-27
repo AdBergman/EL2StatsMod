@@ -77,9 +77,6 @@ namespace EL2.StatsMod.Stats
                         case EndGameStatisticType.Score:
                             ts.Score = value;
                             break;
-                        default:
-                            // Ignore Count / unknown
-                            break;
                     }
 
                     perTurn[turn] = ts;
