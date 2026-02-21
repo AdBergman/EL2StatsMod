@@ -96,8 +96,8 @@ C:\Program Files (x86)\Steam\steamapps\common\ENDLESS Legend 2\
 
 ### 2. Install End Game Report
 
-1. Download `EndGameReport_v1.0.0.zip`  
-   https://github.com/AdBergman/EL2StatsMod/releases/tag/v1.0.0
+1. Download `EndGameReport_v1.1.0.zip`  
+   https://github.com/AdBergman/EL2StatsMod/releases/tag/v1.1.0
 2. Extract the contents into the *same directory that contains* `ENDLESS Legend 2.exe`  
    (so that `BepInEx/plugins/EL2StatsMod/EL2.StatsMod.dll` exists)
 3. Launch the game
