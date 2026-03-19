@@ -127,7 +127,7 @@ The full file path is also written to the BepInEx log.
 ## Uploading the report to Endless Workshop
 
 1. Open:  
-   👉 https://endlesworkshop.dev/summary
+   👉 https://endlessworkshop.dev/summary
 2. Upload your `EL2_EndGame_*.json` file
 3. The page renders your game’s end-game data for exploration and analysis
 
